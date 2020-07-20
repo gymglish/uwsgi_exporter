@@ -235,6 +235,7 @@ func NewUwsgiWorkerStats() []Stat {
 	label_names := []string{"type", "identifier", "worker_id"}
 	return []Stat{
 		NewUwsgiGaugeStat("Accepting", "Is this worker accepting requests?.", prefix, &label_names),
+		NewUwsgiGaugeStat("Busy", "Is this worker busy?.", prefix, &label_names),
 		NewUwsgiCounterStat("Requests", "Number of requests.", prefix, suffix, &label_names),
 		NewUwsgiCounterStat("Delta_Requests", "Number of delta requests.", prefix, suffix, &label_names),
 		NewUwsgiCounterStat("Exceptions", "Number of exceptions.", prefix, suffix, &label_names),

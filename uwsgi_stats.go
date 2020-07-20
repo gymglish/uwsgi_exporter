@@ -60,6 +60,23 @@ type UwsgiWorker struct {
 	Avg_Rt         int
 	Apps           []UwsgiApp
 	Cores          []UwsgiCore
+
+	Busy           int
+}
+
+type UwsgiWorkerForJSON UwsgiWorker
+
+func (d *UwsgiWorkerForJSON) UnmarshalJSON(b []byte) error {
+	if err := json.Unmarshal(b, (*UwsgiWorker)(d)); err != nil {
+		return err
+	}
+
+	if d.Status == "busy" {
+		d.Busy = 1
+	} else {
+		d.Busy = 0
+	}
+	return nil
 }
 
 type UwsgiApp struct {
