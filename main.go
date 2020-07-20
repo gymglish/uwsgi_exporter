@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"net/http"
 	"strings"
 )
@@ -53,6 +54,6 @@ func main() {
 	collector := NewUwsgiStatsCollector(uwsgi_stats_reader)
 	prometheus.MustRegister(collector)
 
-	http.Handle("/metrics", prometheus.Handler())
+	http.Handle("/metrics", promhttp.Handler())
 	http.ListenAndServe(*addr, nil)
 }
