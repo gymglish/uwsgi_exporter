@@ -13,6 +13,7 @@ type UwsgiStatsCollector struct {
 	ErrorDesc        *prometheus.Desc
 	UwsgiStats       []Stat
 	UwsgiSocketStats []Stat
+	UwsgiWorkerStatusesDesc        *prometheus.Desc
 	UwsgiWorkerStats []Stat
 	UwsgiAppStats    []Stat
 	UwsgiCoreStats   []Stat
@@ -38,6 +39,7 @@ func (u *UwsgiStatsCollector) Describe(ch chan<- *prometheus.Desc) {
 	for _, stat := range u.UwsgiSocketStats {
 		ch <- stat.Desc
 	}
+	ch <- u.UwsgiWorkerStatusesDesc
 	for _, stat := range u.UwsgiWorkerStats {
 		ch <- stat.Desc
 	}
@@ -144,6 +146,21 @@ func (u *UwsgiStatsCollector) Collect(ch chan<- prometheus.Metric) {
 				}
 				ch <- NewSocketStatMetric(&stat, value.(int), &uwsgi_socket, &results)
 			}
+		}
+		var statuses map[string]int
+		statuses = map[string]int{}
+		for _ , w :=  range results.UwsgiStats.All_Workers {
+			statuses[w.Status] = statuses[w.Status] + 1
+		}
+		for status, count := range statuses {
+			ch <- prometheus.MustNewConstMetric(
+				u.UwsgiWorkerStatusesDesc,
+				prometheus.GaugeValue,
+				float64(count),
+				results.Type,
+				results.Identifier,
+				status,
+			)
 		}
 		for _, stat := range u.UwsgiWorkerStats {
 			for _, uwsgi_worker := range results.UwsgiStats.Workers {
@@ -296,6 +313,12 @@ func NewUwsgiStatsCollector(reader *UwsgiStatsReader) *UwsgiStatsCollector {
 		),
 		UwsgiStats:       NewUwsgiStats(),
 		UwsgiSocketStats: NewUwsgiSocketStats(),
+		UwsgiWorkerStatusesDesc: prometheus.NewDesc(
+			"uwsgi_stats_worker_statuses",
+			"Number of worker in this state",
+			[]string{"type", "identifier", "status"},
+			prometheus.Labels{},
+		),
 		UwsgiWorkerStats: NewUwsgiWorkerStats(),
 		UwsgiAppStats:    NewUwsgiAppStats(),
 		UwsgiCoreStats:   NewUwsgiCoreStats(),
