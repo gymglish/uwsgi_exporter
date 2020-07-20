@@ -29,6 +29,7 @@ type UwsgiStats struct {
 	Cwd                 string
 	Sockets             []UwsgiSocket
 	Workers             []UwsgiWorker
+	All_Workers         []UwsgiWorker
 }
 
 type UwsgiSocket struct {
@@ -78,6 +79,29 @@ func (d *UwsgiWorkerForJSON) UnmarshalJSON(b []byte) error {
 	}
 	return nil
 }
+
+
+type UwsgiStatsForJSON UwsgiStats
+
+func (d *UwsgiStats) UnmarshalJSON(b []byte) error {
+	if err := json.Unmarshal(b, (*UwsgiStatsForJSON)(d)); err != nil {
+		return err
+	}
+
+	d.All_Workers = d.Workers
+	d.Workers = make([]UwsgiWorker, 0, len(d.All_Workers))
+
+	for _, w := range d.All_Workers {
+		if (w.Id == 0 && w.Status == "cheap") {
+			// The worker hasn't started, don't add stats since all workers
+			// in this state will define the same metrics, since their id is 0
+			continue
+		}
+		d.Workers = append(d.Workers, w)
+	}
+	return nil
+}
+
 
 type UwsgiApp struct {
 	Id           int
