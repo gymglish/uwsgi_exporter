@@ -79,7 +79,6 @@ func NewWorkerStatMetric(stat *Stat, value int, worker *UwsgiWorker, results *Uw
 		results.Type,
 		results.Identifier,
 		strconv.Itoa(worker.Id),
-		worker.Status,
 	)
 }
 
@@ -91,7 +90,6 @@ func NewAppStatMetric(stat *Stat, value int, app *UwsgiApp, worker *UwsgiWorker,
 		results.Type,
 		results.Identifier,
 		strconv.Itoa(worker.Id),
-		worker.Status,
 		strconv.Itoa(app.Id),
 		app.Mountpoint,
 		app.Chdir,
@@ -106,7 +104,6 @@ func NewCoreStatMetric(stat *Stat, value int, core *UwsgiCore, worker *UwsgiWork
 		results.Type,
 		results.Identifier,
 		strconv.Itoa(worker.Id),
-		worker.Status,
 		strconv.Itoa(core.Id),
 	)
 }
@@ -235,7 +232,7 @@ func NewUwsgiSocketStats() []Stat {
 func NewUwsgiWorkerStats() []Stat {
 	prefix := "uwsgi_stats_worker_"
 	suffix := "_total"
-	label_names := []string{"type", "identifier", "worker_id", "status"}
+	label_names := []string{"type", "identifier", "worker_id"}
 	return []Stat{
 		NewUwsgiGaugeStat("Accepting", "Is this worker accepting requests?.", prefix, &label_names),
 		NewUwsgiCounterStat("Requests", "Number of requests.", prefix, suffix, &label_names),
@@ -257,7 +254,7 @@ func NewUwsgiWorkerStats() []Stat {
 func NewUwsgiAppStats() []Stat {
 	prefix := "uwsgi_stats_worker_app_"
 	suffix := "_total"
-	label_names := []string{"type", "identifier", "worker_id", "status", "app_id", "mountpoint", "chdir"}
+	label_names := []string{"type", "identifier", "worker_id", "app_id", "mountpoint", "chdir"}
 	return []Stat{
 		NewUwsgiGaugeStat("Startup_Time", "How long this app took to start.", prefix, &label_names),
 		NewUwsgiCounterStat("Requests", "Number of requests.", prefix, suffix, &label_names),
@@ -268,7 +265,7 @@ func NewUwsgiAppStats() []Stat {
 func NewUwsgiCoreStats() []Stat {
 	prefix := "uwsgi_stats_worker_core_"
 	suffix := "_total"
-	label_names := []string{"type", "identifier", "worker_id", "status", "core_id"}
+	label_names := []string{"type", "identifier", "worker_id", "core_id"}
 	return []Stat{
 		NewUwsgiCounterStat("Requests", "Number of requests.", prefix, suffix, &label_names),
 		NewUwsgiCounterStat("Static_Requests", "Number of static requests.", prefix, suffix, &label_names),
