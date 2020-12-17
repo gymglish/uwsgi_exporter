@@ -67,8 +67,8 @@ type UwsgiWorker struct {
 
 type UwsgiWorkerForJSON UwsgiWorker
 
-func (d *UwsgiWorkerForJSON) UnmarshalJSON(b []byte) error {
-	if err := json.Unmarshal(b, (*UwsgiWorker)(d)); err != nil {
+func (d *UwsgiWorker) UnmarshalJSON(b []byte) error {
+	if err := json.Unmarshal(b, (*UwsgiWorkerForJSON)(d)); err != nil {
 		return err
 	}
 
