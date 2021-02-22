@@ -77,6 +77,7 @@ func (d *UwsgiWorker) UnmarshalJSON(b []byte) error {
 	} else {
 		d.Busy = 0
 	}
+	// Add busy percent ? nbcore with in_request == 1 / nb_core ?
 	return nil
 }
 
@@ -121,7 +122,7 @@ type UwsgiCore struct {
 	Offloaded_Requests int
 	Write_Errors       int
 	Read_Errors        int
-	In_Requests        int
+	In_Request         int
 	Vars               []string
 }
 

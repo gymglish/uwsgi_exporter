@@ -291,7 +291,7 @@ func NewUwsgiCoreStats() []Stat {
 		NewUwsgiCounterStat("Offloaded_Requests", "Number of requests offloaded to threads.", prefix, suffix, &label_names),
 		NewUwsgiCounterStat("Write_Errors", "Number of write errors.", prefix, suffix, &label_names),
 		NewUwsgiCounterStat("Read_Errors", "Number of read errors.", prefix, suffix, &label_names),
-		NewUwsgiCounterStat("In_Requests", "Number of requests in.", prefix, suffix, &label_names),
+		NewUwsgiGaugeStat("In_Request", "Is currently processing a request", prefix, &label_names),
 	}
 }
 
